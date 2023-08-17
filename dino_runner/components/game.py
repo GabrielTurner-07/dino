@@ -1,14 +1,34 @@
 import pygame
+import random
 
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE
+from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE, CLOUD, SCREEN_WIDTH, game_speed
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 from dino_runner.components.power_ups.power_up_manager import PowerUpManager
 from dino_runner.utils.text_utils import draw_message_component
 
+pygame.init()
 
+CLOUD = pygame.image.load("Cloud.png")
+music = pygame.mixer.music.load("song.mp3")
+class Cloud:
+    def __init__(self):
+        self.x = SCREEN_WIDTH + random.randint(800, 1000)
+        self.y = random.randint(50, 100)
+        self.image = CLOUD
+        self.width = self.image.get_width()
+
+    def update(self):
+        self.x -= game_speed
+        if self.x < -self.width:
+            self.x = SCREEN_WIDTH + random.randint(2500, 3000)
+            self.y = random.randint(50, 100)
+
+    def draw(self, SCREEN):
+        SCREEN.blit(self.image, (self.x, self.y))
 
 class Game:
+    pygame.mixer.music.play()
     def __init__(self):
         pygame.init()
         pygame.display.set_caption(TITLE)
@@ -21,10 +41,11 @@ class Game:
         self.score = 0
         self.death_count = 0
         self.x_pos_bg = 0
-        self.y_pos_bg = 380
+        self.y_pos_bg = 550
         self.player = Dinosaur()
         self.obstacle_manager = ObstacleManager()
         self.power_up_manager = PowerUpManager()
+        self.cloud = Cloud()
 
     def execute(self):
         self.running = True
@@ -66,7 +87,7 @@ class Game:
 
     def draw(self):
         self.clock.tick(FPS)
-        self.screen.fill((255, 255, 255))  # '#FFFFFF'
+        self.screen.fill((135, 206, 235))  # '#FFFFFF'
         self.draw_background()
         self.player.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
@@ -76,6 +97,7 @@ class Game:
         pygame.display.update()
         pygame.display.flip()
 
+
     def draw_background(self):
         image_width = BG.get_width()
         self.screen.blit(BG, (self.x_pos_bg, self.y_pos_bg))
@@ -84,6 +106,8 @@ class Game:
             self.screen.blit(BG, (image_width + self.x_pos_bg, self.y_pos_bg))
             self.x_pos_bg = 0
         self.x_pos_bg -= self.game_speed
+        self.cloud.draw(self.screen)
+        self.cloud.update()
 
     def draw_score(self):
         draw_message_component(

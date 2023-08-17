@@ -13,8 +13,8 @@ from pygame.sprite import Sprite
 
 
 X_POS = 80
-Y_POS = 310
-Y_DUCK_POS = Y_POS + 30
+Y_POS = 490
+Y_DUCK_POS = Y_POS + 25
 JUMP_VEL = 8.5
 
 
@@ -78,6 +78,7 @@ class Dinosaur(Sprite):
 
     def run(self):
         self.image = RUN_IMG[self.type][self.step_index // 5]
+        self.image = pygame.transform.scale(self.image, (100, 100))
         self.dino_rect = self.image.get_rect()
         self.dino_rect.x = X_POS
         self.dino_rect.y = Y_POS
@@ -85,6 +86,7 @@ class Dinosaur(Sprite):
 
     def jump(self):
         self.image = JUMP_IMG[self.type]
+        self.image = pygame.transform.scale(self.image, (100, 100))
         if self.dino_jump:
             self.dino_rect.y -= self.jump_vel * 4
             self.jump_vel -= 0.8
@@ -96,6 +98,7 @@ class Dinosaur(Sprite):
 
     def duck(self):
         self.image = DUCK_IMG[self.type][self.step_index // 5]
+        self.image = pygame.transform.scale(self.image, (150, 70))
         self.dino_rect = self.image.get_rect()
         self.dino_rect.x = X_POS
         self.dino_rect.y = Y_DUCK_POS

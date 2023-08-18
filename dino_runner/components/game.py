@@ -28,7 +28,7 @@ class Cloud:
         SCREEN.blit(self.image, (self.x, self.y))
 
 class Game:
-    pygame.mixer.music.play()
+    pygame.mixer.music.play(-1)
     def __init__(self):
         pygame.init()
         pygame.display.set_caption(TITLE)
@@ -46,6 +46,7 @@ class Game:
         self.obstacle_manager = ObstacleManager()
         self.power_up_manager = PowerUpManager()
         self.cloud = Cloud()
+        self.highest_score = 0
 
     def execute(self):
         self.running = True
@@ -72,7 +73,7 @@ class Game:
             if event.type == pygame.QUIT:
                 self.playing = False
                 self.running = False
-
+                pygame.mixer.music.stop()
     def update(self):
         user_input = pygame.key.get_pressed()
         self.player.update(user_input)
@@ -80,8 +81,11 @@ class Game:
         self.power_up_manager.update(self)
         self.update_score()
 
+
     def update_score(self):
         self.score += 1
+        if self.score > self.highest_score:
+            self.highest_score = self.score
         if self.score % 100 == 0:
             self.game_speed += 5
 
@@ -109,13 +113,15 @@ class Game:
         self.cloud.draw(self.screen)
         self.cloud.update()
 
+
     def draw_score(self):
         draw_message_component(
-            f"Score: {self.score}",
+            f"Score: {self.score}   Highest: {self.highest_score}",
             self.screen,
-            pos_x_center=1000,
+            pos_x_center=900,
             pos_y_center=50,
         )
+
 
     def draw_power_up_time(self):
         if self.player.has_power_up:
